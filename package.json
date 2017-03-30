@@ -4,11 +4,15 @@
   "description": "Incremental Sync",
   "main": "build/index.js",
   "scripts": {
+    "start": "watch 'npm run build' src",
     "build": "babel src -d build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "npm test -- --watch"
   },
   "babel": {
-    "presets": ["latest"]
+    "presets": [
+      "latest"
+    ]
   },
   "repository": {
     "type": "git",
@@ -26,6 +30,8 @@
   "homepage": "https://github.com/martintasker/incremental-sync#readme",
   "devDependencies": {
     "babel-cli": "^6.24.0",
-    "babel-preset-latest": "^6.24.0"
+    "babel-preset-latest": "^6.24.0",
+    "jest": "^19.0.2",
+    "watch": "^1.0.2"
   }
 }
