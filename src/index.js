@@ -1,4 +1,5 @@
 class IncrementalSync {
+
   constructor(getOldItemKey, getCurrentItemKey, hasChanged, emit) {
     this.getOldItemKey = getOldItemKey;
     this.getCurrentItemKey = getCurrentItemKey;
@@ -40,7 +41,7 @@ class IncrementalSync {
 
     const oldItem = this.oldItems[key];
     if (oldItem && this.hasChanged(oldItem, item)) {
-      this.emit({ event: 'changed', old: oldItem, new: item });
+      this.emit({ event: 'changed', old: oldItem, current: item });
     }
 
     if (this.oldDone && !oldItem) {
