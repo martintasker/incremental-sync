@@ -1,0 +1,23 @@
+{
+  "name": "incremental-sync",
+  "version": "1.0.0",
+  "description": "Incremental Sync",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martintasker/incremental-sync.git"
+  },
+  "keywords": [
+    "icnremental",
+    "sync"
+  ],
+  "author": "Martin Tasker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/martintasker/incremental-sync/issues"
+  },
+  "homepage": "https://github.com/martintasker/incremental-sync#readme"
+}
