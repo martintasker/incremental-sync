@@ -4,7 +4,11 @@
   "description": "Incremental Sync",
   "main": "build/index.js",
   "scripts": {
+    "build": "babel src -d build",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "babel": {
+    "presets": ["latest"]
   },
   "repository": {
     "type": "git",
@@ -19,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/martintasker/incremental-sync/issues"
   },
-  "homepage": "https://github.com/martintasker/incremental-sync#readme"
+  "homepage": "https://github.com/martintasker/incremental-sync#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-preset-latest": "^6.24.0"
+  }
 }
