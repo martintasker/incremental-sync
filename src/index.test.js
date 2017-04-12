@@ -8,33 +8,42 @@ test("doesn't crash", () => {
   expect(is.currentDone).toEqual(false);
 });
 
-test("does useful stuff", () => {
+// data and functions for use in next set of tests
 
-  var stored = [
-    { key: 'foo', value: '1' },
-    { key: 'bar', value: '2' },
-    { key: 'baz', value: '3' }
-  ];
+const stored = [
+  { key: 'foo', value: '1' },
+  { key: 'bar', value: '2' },
+  { key: 'baz', value: '3' }
+];
 
-  var current = [
-    { id: 'bar', data: '2' },
-    { id: 'baz', data: '4' },
-    { id: 'quux', data: '5' }
-  ]
+const current = [
+  { id: 'bar', data: '2' },
+  { id: 'baz', data: '4' },
+  { id: 'quux', data: '5' }
+]
+
+function getStoredItemKey(item) {
+  return item.key;
+}
+
+function getCurrentItemKey(item) {
+  return item.id;
+}
+
+function hasChanged(storedItem, currentItem) {
+  return storedItem.value !== currentItem.data;
+}
+
+test("test data and accessor functions work", () => {
+  expect(getStoredItemKey(stored[0])).toEqual('foo');
+  expect(getCurrentItemKey(current[0])).toEqual('bar');
+  expect(hasChanged(stored[1], current[0])).toEqual(false);
+  expect(hasChanged(stored[2], current[1])).toEqual(true);
+});
+
+test("non-interleaving case", () => {
 
   var events = [];
-
-  function getStoredItemKey(item) {
-    return item.key;
-  }
-
-  function getCurrentItemKey(item) {
-    return item.id;
-  }
-
-  function hasChanged(storedItem, currentItem) {
-    return storedItem.value !== currentItem.data;
-  }
 
   function emit(event) {
     console.log("event: %j", event);
@@ -43,13 +52,6 @@ test("does useful stuff", () => {
 
   var is = new IncrementalSync(getStoredItemKey, getCurrentItemKey, hasChanged, emit);
 
-  // test the test code
-  expect(getStoredItemKey(stored[0])).toEqual('foo');
-  expect(getCurrentItemKey(current[0])).toEqual('bar');
-  expect(hasChanged(stored[1], current[0])).toEqual(false);
-  expect(hasChanged(stored[2], current[1])).toEqual(true);
-
-  // run the real code and see results
   is.addStoredItem(stored[0]);
   is.addStoredItem(stored[1]);
   is.addStoredItem(stored[2]);
