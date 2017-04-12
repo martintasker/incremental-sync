@@ -68,7 +68,7 @@ stored and current items, and sync events are emitted as soon as possible:
 Install using npm:
 
 ```shell
-npm install --save incremental-sync
+npm install --save martintasker/incremental-sync
 ```
 
 Import from ES6 code:
