@@ -74,7 +74,7 @@ npm install --save incremental-sync
 Import from ES6 code:
 
 ```js
-import IncrementalSync from 'incremental-sync`
+import IncrementalSync from 'incremental-sync'
 
 const is = new IncrementalSync(...);
 ```
@@ -85,8 +85,10 @@ Clone the repo and `npm install` dependencies.
 
 Use `npm start` to set up compilation watch, and `npm test` for testing.
 
-## todo
+## To do
+
+Do more interleaved test code to demonstrate the core proposition more convincingly.
+
+Change name to `incremental-diff`, since really this is doing the diff required for sync.
 
 Make conveniently available in other module formats.
-
-More interleaved test code.
