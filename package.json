@@ -5,8 +5,8 @@
   "main": "build/index.js",
   "scripts": {
     "start": "watch 'npm run build' src",
-    "build": "babel src -d build",
-    "test": "jest",
+    "build": "babel src -d build --ignore test.js",
+    "test": "jest --watch src",
     "test:watch": "npm test -- --watch"
   },
   "babel": {

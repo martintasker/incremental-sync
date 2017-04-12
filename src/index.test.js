@@ -46,7 +46,6 @@ test("non-interleaving case", () => {
   var events = [];
 
   function emit(event) {
-    console.log("event: %j", event);
     events.push(event);
   }
 
@@ -71,6 +70,51 @@ test("non-interleaving case", () => {
   expect(events[0].current.data).toEqual('4');
 
   is.addCurrentItem(current[2]);
+  expect(events.length).toEqual(2);
+  expect(events[1].event).toEqual('to-add');
+  expect(events[1].current).toEqual(current[2]);
+  expect(events[1].current.id).toEqual('quux');
+  expect(events[1].current.data).toEqual('5');
+
+  is.finishCurrentItems();
+  expect(events.length).toEqual(3);
+  expect(events[2].event).toEqual('to-delete');
+  expect(events[2].stored).toEqual(stored[0]);
+  expect(events[2].stored.key).toEqual('foo');
+  expect(events[2].stored.value).toEqual('1');
+});
+
+test("interleaving case 1", () => {
+
+  var events = [];
+
+  function emit(event) {
+    events.push(event);
+  }
+
+  var is = new IncrementalSync(getStoredItemKey, getCurrentItemKey, hasChanged, emit);
+
+  // unchanged bar
+  is.addStoredItem(stored[1]);
+  is.addCurrentItem(current[0]);
+  expect(events.length).toEqual(0);
+
+  // changed baz
+  is.addStoredItem(stored[2]);
+  is.addCurrentItem(current[1]);
+  expect(events.length).toEqual(1);
+  expect(events[0].event).toEqual('to-update');
+  expect(events[0].stored).toEqual(stored[2]);
+  expect(events[0].current).toEqual(current[1]);
+  expect(events[0].stored.key).toEqual('baz');
+  expect(events[0].stored.value).toEqual('3');
+  expect(events[0].current.id).toEqual('baz');
+  expect(events[0].current.data).toEqual('4');
+
+  is.addStoredItem(stored[0]);
+  is.addCurrentItem(current[2]);
+
+  is.finishStoredItems();
   expect(events.length).toEqual(2);
   expect(events[1].event).toEqual('to-add');
   expect(events[1].current).toEqual(current[2]);
