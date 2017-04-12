@@ -9,44 +9,44 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var IncrementalSync = function () {
-  function IncrementalSync(getOldItemKey, getCurrentItemKey, hasChanged, emit) {
+  function IncrementalSync(getStoredItemKey, getCurrentItemKey, hasChanged, emit) {
     _classCallCheck(this, IncrementalSync);
 
-    this.getOldItemKey = getOldItemKey;
+    this.getStoredItemKey = getStoredItemKey;
     this.getCurrentItemKey = getCurrentItemKey;
     this.hasChanged = hasChanged;
     this.emit = emit;
-    this.oldItems = {};
+    this.storedItems = {};
     this.currentItems = {};
-    this.oldDone = false;
+    this.storedDone = false;
     this.currentDone = false;
   }
 
   _createClass(IncrementalSync, [{
-    key: 'addOldItem',
-    value: function addOldItem(item) {
-      var key = this.getOldItemKey(item);
-      this.oldItems[key] = item;
+    key: 'addStoredItem',
+    value: function addStoredItem(item) {
+      var key = this.getStoredItemKey(item);
+      this.storedItems[key] = item;
 
       var currentItem = this.currentItems[key];
       if (currentItem && this.hasChanged(item, currentItem)) {
-        this.emit({ event: 'changed', old: item, current: currentItem });
+        this.emit({ event: 'to-update', stored: item, current: currentItem });
       }
 
       if (this.currentDone && !currentItem) {
-        this.emit({ event: 'deleted', old: item });
+        this.emit({ event: 'to-delete', stored: item });
       }
     }
   }, {
-    key: 'finishOldItems',
-    value: function finishOldItems() {
+    key: 'finishStoredItems',
+    value: function finishStoredItems() {
       var _this = this;
 
-      this.oldDone = true;
+      this.storedDone = true;
       Object.keys(this.currentItems).forEach(function (key) {
-        var oldItem = _this.oldItems[key];
-        if (!oldItem) {
-          _this.emit({ event: 'added', current: _this.currentItems[key] });
+        var storedItem = _this.storedItems[key];
+        if (!storedItem) {
+          _this.emit({ event: 'to-add', current: _this.currentItems[key] });
         }
       });
     }
@@ -56,13 +56,13 @@ var IncrementalSync = function () {
       var key = this.getCurrentItemKey(item);
       this.currentItems[key] = item;
 
-      var oldItem = this.oldItems[key];
-      if (oldItem && this.hasChanged(oldItem, item)) {
-        this.emit({ event: 'changed', old: oldItem, new: item });
+      var storedItem = this.storedItems[key];
+      if (storedItem && this.hasChanged(storedItem, item)) {
+        this.emit({ event: 'to-update', stored: storedItem, current: item });
       }
 
-      if (this.oldDone && !oldItem) {
-        this.emit({ event: 'added', current: item });
+      if (this.storedDone && !storedItem) {
+        this.emit({ event: 'to-add', current: item });
       }
     }
   }, {
@@ -71,10 +71,10 @@ var IncrementalSync = function () {
       var _this2 = this;
 
       this.currentDone = true;
-      Object.keys(this.oldItems).forEach(function (key) {
+      Object.keys(this.storedItems).forEach(function (key) {
         var currentItem = _this2.currentItems[key];
         if (!currentItem) {
-          _this2.emit({ event: 'deleted', old: _this2.oldItems[key] });
+          _this2.emit({ event: 'to-delete', stored: _this2.storedItems[key] });
         }
       });
     }

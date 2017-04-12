@@ -1,36 +1,36 @@
 class IncrementalSync {
 
-  constructor(getOldItemKey, getCurrentItemKey, hasChanged, emit) {
-    this.getOldItemKey = getOldItemKey;
+  constructor(getStoredItemKey, getCurrentItemKey, hasChanged, emit) {
+    this.getStoredItemKey = getStoredItemKey;
     this.getCurrentItemKey = getCurrentItemKey;
     this.hasChanged = hasChanged;
     this.emit = emit;
-    this.oldItems = {};
+    this.storedItems = {};
     this.currentItems = {};
-    this.oldDone = false;
+    this.storedDone = false;
     this.currentDone = false;
   }
 
-  addOldItem(item) {
-    const key = this.getOldItemKey(item);
-    this.oldItems[key] = item;
+  addStoredItem(item) {
+    const key = this.getStoredItemKey(item);
+    this.storedItems[key] = item;
 
     const currentItem = this.currentItems[key];
     if (currentItem && this.hasChanged(item, currentItem)) {
-      this.emit({ event: 'changed', old: item, current: currentItem });
+      this.emit({ event: 'to-update', stored: item, current: currentItem });
     }
 
     if (this.currentDone && !currentItem) {
-      this.emit({ event: 'deleted', old: item });
+      this.emit({ event: 'to-delete', stored: item });
     }
   }
 
-  finishOldItems() {
-    this.oldDone = true;
+  finishStoredItems() {
+    this.storedDone = true;
     Object.keys(this.currentItems).forEach(key => {
-      const oldItem = this.oldItems[key];
-      if (!oldItem) {
-        this.emit({ event: 'added', current: this.currentItems[key] });
+      const storedItem = this.storedItems[key];
+      if (!storedItem) {
+        this.emit({ event: 'to-add', current: this.currentItems[key] });
       }
     });
   }
@@ -39,22 +39,22 @@ class IncrementalSync {
     const key = this.getCurrentItemKey(item);
     this.currentItems[key] = item;
 
-    const oldItem = this.oldItems[key];
-    if (oldItem && this.hasChanged(oldItem, item)) {
-      this.emit({ event: 'changed', old: oldItem, current: item });
+    const storedItem = this.storedItems[key];
+    if (storedItem && this.hasChanged(storedItem, item)) {
+      this.emit({ event: 'to-update', stored: storedItem, current: item });
     }
 
-    if (this.oldDone && !oldItem) {
-      this.emit({ event: 'added', current: item });
+    if (this.storedDone && !storedItem) {
+      this.emit({ event: 'to-add', current: item });
     }
   }
 
   finishCurrentItems() {
     this.currentDone = true;
-    Object.keys(this.oldItems).forEach(key => {
+    Object.keys(this.storedItems).forEach(key => {
       const currentItem = this.currentItems[key];
       if (!currentItem) {
-        this.emit({ event: 'deleted', old: this.oldItems[key] });
+        this.emit({ event: 'to-delete', stored: this.storedItems[key] });
       }
     });
   }
